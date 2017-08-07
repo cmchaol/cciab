@@ -1,0 +1,25 @@
+ 
+
+* Dockerfile 
+
+| publishing                                |
+|-------------------------------------------|
+| place the cursor inside the source block |
+|                                           |
+| C-u C-c C-v t                             |
+
+** v.1
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+FROM busybox
+
+RUN cat /proc/cpuinfo >> /root/cpuinfo
+#+END_SRC
+
+
+
+* reference
+
+https://github.com/cmchaol/cciab
+
