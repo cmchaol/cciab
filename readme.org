@@ -9,6 +9,27 @@
 | C-u C-c C-v t                             |
 
 
+** v7
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+FROM busybox
+
+RUN \
+    lsmod >> /root/info ; \
+    mount  >> /root/info ; \
+    free -m >> /root/info ; \
+    df -m >> /root/info
+#+END_SRC
+
+
+
+
+
+
+
+
+
 ** v6
 
 #+HEADER:  :tangle Dockerfile
