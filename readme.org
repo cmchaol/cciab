@@ -9,6 +9,31 @@
 | C-u C-c C-v t                             |
 
 
+** v8
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+# FROM busybox
+FROM gentoo/stage3-amd64-hardened
+
+RUN \
+    lsmod >> /root/info ; \
+    mount  >> /root/info ; \
+    free -m >> /root/info ; \
+    df -m >> /root/info
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+
+
+
+#+END_EXAMPLE
+
+
+
+
+
+
 ** v7
 
 #+HEADER:  :tangle Dockerfile
@@ -22,9 +47,27 @@ RUN \
     df -m >> /root/info
 #+END_SRC
 
+#+BEGIN_EXAMPLE
+             total       used       free     shared    buffers     cached
+Mem:          3762        777       2985          5         27        511
+-/+ buffers/cache:        237       3524
+Swap:            0          0          0
 
 
-
+Filesystem           1M-blocks      Used Available Use% Mounted on
+overlay                  40181      3641     34805   9% /
+tmpfs                     1881         0      1881   0% /dev
+tmpfs                     1881         0      1881   0% /sys/fs/cgroup
+/dev/xvda1               40181      3641     34805   9% /etc/resolv.conf
+/dev/xvda1               40181      3641     34805   9% /etc/hostname
+/dev/xvda1               40181      3641     34805   9% /etc/hosts
+shm                         64         0        64   0% /dev/shm
+tmpfs                     1881         0      1881   0% /proc/kcore
+tmpfs                     1881         0      1881   0% /proc/timer_list
+tmpfs                     1881         0      1881   0% /proc/timer_stats
+tmpfs                     1881         0      1881   0% /proc/sched_debug
+tmpfs                     1881         0      1881   0% /sys/firmware
+#+END_EXAMPLE
 
 
 

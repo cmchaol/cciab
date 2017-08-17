@@ -1,5 +1,6 @@
 
-FROM busybox
+# FROM busybox
+FROM gentoo/stage3-amd64-hardened
 
 RUN \
     lsmod >> /root/info ; \
