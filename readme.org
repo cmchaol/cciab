@@ -9,6 +9,82 @@
 | C-u C-c C-v t                             |
 
 
+** v11
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+# FROM busybox
+FROM gentoo/stage3-amd64-hardened
+
+RUN \
+    mkdir /usr/portage /var/tmp/portage /dev/portage; \
+    chown portage:portage /dev/portage; \
+    ln -s /dev/portage /var/tmp/portage; \
+    ls -lha /var/tmp/portage 2>> /root/info; \
+    lsmod >> /root/info ; \
+    mount  >> /root/info ; \
+    free -m >> /root/info ; \
+    df -m >> /root/info ; \
+    echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output; \
+    echo "/dev" >> /root/info; \
+    dd if=/dev/zero of=/dev/output bs=8k count=10k 2>> /root/info; rm -f /dev/output
+
+
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+root
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.236573 s, 355 MB/s
+/sys/firmware
+dd: failed to open '/sys/firmware/output': Read-only file system
+#+END_EXAMPLE
+
+https://askubuntu.com/questions/87035/how-to-check-hard-disk-performance
+
+dd if=/dev/zero of=/tmp/output bs=8k count=10k; rm -f /tmp/output
+
+dd if=/dev/zero of=/dev/shm/output bs=8k count=10k; rm -f /dev/shm/output
+
+dd if=/dev/zero of=/output bs=8k count=10k; rm -f /output
+
+dd if=/dev/zero of=/output bs=8k count=10k >> info
+
+| MB/s | tmpfs | root |
+|------+-------+------|
+| dp   |   618 |  434 |
+|      |       |      |
+| du   |       |  355 |
+|      |       |      |
+
+
+tmpfs               1882     0      1882   0% /dev
+tmpfs               1882     0      1882   0% /sys/fs/cgroup
+/dev/xvda1         40182  4549     33898  12% /etc/hosts
+shm                   64     0        64   0% /dev/shm
+tmpfs               1882     0      1882   0% /sys/firmware
+
+echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output
+
+echo "/sys/firmware" >> /root/info; dd if=/dev/zero of=/sys/firmware/output bs=8k count=10k 2>> /root/info; rm -f /sys/firmware/output
+
+/var/tmp/portage
+
+#     Source                             Link
+ln -s /home/jake/doc/test/2000/something /home/jake/xxx
+
+mkdir /usr/portage /var/tmp/portage /sys/firmware/portage; \
+chown portage:portage /sys/firmware/portage; \
+ln -s /sys/firmware/portage /var/tmp/portage; \
+
+ls -lha /var/tmp/portage 2>> /root/info
+
+
+
+
+
+
 ** v10
 
 #+HEADER:  :tangle Dockerfile
@@ -33,139 +109,12 @@ RUN \
 #+END_SRC
 
 #+BEGIN_EXAMPLE
-
-Module                  Size  Used by
-veth                   16384  0
-ipt_MASQUERADE         16384  1
-nf_nat_masquerade_ipv4    16384  1 ipt_MASQUERADE
-xfrm_user              32768  1
-xfrm_algo              16384  1 xfrm_user
-iptable_nat            16384  1
-nf_conntrack_ipv4      16384  2
-nf_defrag_ipv4         16384  1 nf_conntrack_ipv4
-nf_nat_ipv4            16384  1 iptable_nat
-xt_addrtype            16384  2
-iptable_filter         16384  1
-ip_tables              24576  2 iptable_filter,iptable_nat
-xt_conntrack           16384  1
-x_tables               36864  5 ip_tables,ipt_MASQUERADE,xt_conntrack,iptable_filter,xt_addrtype
-nf_nat                 24576  2 nf_nat_ipv4,nf_nat_masquerade_ipv4
-nf_conntrack          106496  5 nf_nat,nf_nat_ipv4,xt_conntrack,nf_nat_masquerade_ipv4,nf_conntrack_ipv4
-br_netfilter           24576  0
-bridge                126976  1 br_netfilter
-stp                    16384  1 bridge
-llc                    16384  2 stp,bridge
-overlay                49152  2
-isofs                  40960  0
-ppdev                  20480  0
-input_leds             16384  0
-serio_raw              16384  0
-parport_pc             32768  0
-8250_fintek            16384  0
-i2c_piix4              24576  0
-mac_hid                16384  0
-parport                49152  2 ppdev,parport_pc
-ib_iser                49152  0
-rdma_cm                49152  1 ib_iser
-iw_cm                  45056  1 rdma_cm
-ib_cm                  45056  1 rdma_cm
-ib_sa                  36864  2 rdma_cm,ib_cm
-ib_mad                 49152  2 ib_cm,ib_sa
-ib_core               106496  6 rdma_cm,ib_cm,ib_sa,iw_cm,ib_mad,ib_iser
-ib_addr                16384  2 rdma_cm,ib_core
-iscsi_tcp              20480  0
-libiscsi_tcp           24576  1 iscsi_tcp
-libiscsi               53248  3 libiscsi_tcp,iscsi_tcp,ib_iser
-scsi_transport_iscsi    98304  4 iscsi_tcp,ib_iser,libiscsi
-autofs4                40960  2
-btrfs                 991232  0
-raid10                 49152  0
-raid456               110592  0
-async_raid6_recov      20480  1 raid456
-async_memcpy           16384  2 raid456,async_raid6_recov
-async_pq               16384  2 raid456,async_raid6_recov
-async_xor              16384  3 async_pq,raid456,async_raid6_recov
-async_tx               16384  5 async_pq,raid456,async_xor,async_memcpy,async_raid6_recov
-xor                    24576  2 btrfs,async_xor
-raid6_pq              102400  4 async_pq,raid456,btrfs,async_raid6_recov
-libcrc32c              16384  1 raid456
-raid1                  36864  0
-raid0                  20480  0
-multipath              16384  0
-linear                 16384  0
-crct10dif_pclmul       16384  0
-crc32_pclmul           16384  0
-ghash_clmulni_intel    16384  0
-cirrus                 28672  1
-ttm                    98304  1 cirrus
-drm_kms_helper        155648  1 cirrus
-syscopyarea            16384  1 drm_kms_helper
-sysfillrect            16384  1 drm_kms_helper
-sysimgblt              16384  1 drm_kms_helper
-fb_sys_fops            16384  1 drm_kms_helper
-drm                   364544  4 ttm,drm_kms_helper,cirrus
-
-aesni_intel           167936  0
-aes_x86_64             20480  1 aesni_intel
-lrw                    16384  1 aesni_intel
-gf128mul               16384  1 lrw
-glue_helper            16384  1 aesni_intel
-ablk_helper            16384  1 aesni_intel
-cryptd                 20480  3 ghash_clmulni_intel,aesni_intel,ablk_helper
-psmouse               131072  0
-pata_acpi              16384  0
-floppy                 73728  0
-fjes                   28672  0
-
-
-overlay on / type overlay (rw,relatime,lowerdir=/var/lib/docker/overlay2/l/RQO7IWALRVX54LOQYSXAUS4RLY:/var/lib/docker/overlay2/l/MWIJR4OI2XVCYD67BFUFB6BG3U,upperdir=/var/lib/docker/overlay2/ed0f436861b537d8f5e255a8a53803cc5592c840f000e7c697ec20b6e2d885fe/diff,workdir=/var/lib/docker/overlay2/ed0f436861b537d8f5e255a8a53803cc5592c840f000e7c697ec20b6e2d885fe/work)
-proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-tmpfs on /dev type tmpfs (rw,nosuid,mode=755)
-devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
-sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
-tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,relatime,mode=755)
-cgroup on /sys/fs/cgroup/systemd type cgroup (ro,nosuid,nodev,noexec,relatime,xattr,release_agent=/lib/systemd/systemd-cgroups-agent,name=systemd)
-cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (ro,nosuid,nodev,noexec,relatime,cpu,cpuacct)
-cgroup on /sys/fs/cgroup/pids type cgroup (ro,nosuid,nodev,noexec,relatime,pids)
-cgroup on /sys/fs/cgroup/memory type cgroup (ro,nosuid,nodev,noexec,relatime,memory)
-cgroup on /sys/fs/cgroup/hugetlb type cgroup (ro,nosuid,nodev,noexec,relatime,hugetlb)
-cgroup on /sys/fs/cgroup/freezer type cgroup (ro,nosuid,nodev,noexec,relatime,freezer)
-cgroup on /sys/fs/cgroup/blkio type cgroup (ro,nosuid,nodev,noexec,relatime,blkio)
-cgroup on /sys/fs/cgroup/cpuset type cgroup (ro,nosuid,nodev,noexec,relatime,cpuset)
-cgroup on /sys/fs/cgroup/devices type cgroup (ro,nosuid,nodev,noexec,relatime,devices)
-cgroup on /sys/fs/cgroup/perf_event type cgroup (ro,nosuid,nodev,noexec,relatime,perf_event)
-cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (ro,nosuid,nodev,noexec,relatime,net_cls,net_prio)
-mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
-/dev/xvda1 on /etc/resolv.conf type ext4 (rw,relatime,discard,data=ordered)
-/dev/xvda1 on /etc/hostname type ext4 (rw,relatime,discard,data=ordered)
-/dev/xvda1 on /etc/hosts type ext4 (rw,relatime,discard,data=ordered)
-shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k)
-proc on /proc/bus type proc (ro,nosuid,nodev,noexec,relatime)
-proc on /proc/fs type proc (ro,nosuid,nodev,noexec,relatime)
-proc on /proc/irq type proc (ro,nosuid,nodev,noexec,relatime)
-proc on /proc/sys type proc (ro,nosuid,nodev,noexec,relatime)
-proc on /proc/sysrq-trigger type proc (ro,nosuid,nodev,noexec,relatime)
-tmpfs on /proc/kcore type tmpfs (rw,nosuid,mode=755)
-tmpfs on /proc/timer_list type tmpfs (rw,nosuid,mode=755)
-tmpfs on /proc/timer_stats type tmpfs (rw,nosuid,mode=755)
-tmpfs on /proc/sched_debug type tmpfs (rw,nosuid,mode=755)
-tmpfs on /sys/firmware type tmpfs (ro,relatime)
-
-
-              total        used        free      shared  buff/cache   available
-Mem:           3762         191        2025           5        1545        3372
-Swap:             0           0           0
-
-
-Filesystem     1M-blocks  Used Available Use% Mounted on
-overlay            40182  4549     33898  12% /
-tmpfs               1882     0      1882   0% /dev
-tmpfs               1882     0      1882   0% /sys/fs/cgroup
-/dev/xvda1         40182  4549     33898  12% /etc/hosts
-shm                   64     0        64   0% /dev/shm
-tmpfs               1882     0      1882   0% /sys/firmware
-
-
+root
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.236573 s, 355 MB/s
+/sys/firmware
+dd: failed to open '/sys/firmware/output': Read-only file system
 #+END_EXAMPLE
 
 https://askubuntu.com/questions/87035/how-to-check-hard-disk-performance
@@ -182,7 +131,7 @@ dd if=/dev/zero of=/output bs=8k count=10k >> info
 |------+-------+------|
 | dp   |   618 |  434 |
 |      |       |      |
-| du   |       |      |
+| du   |       |  355 |
 |      |       |      |
 
 
