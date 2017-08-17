@@ -9,6 +9,50 @@
 | C-u C-c C-v t                             |
 
 
+** v12
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+# FROM busybox
+FROM gentoo/stage3-amd64-hardened
+
+RUN \
+    mkdir /usr/portage /dev/portage; \
+    chown portage:portage /dev/portage; \
+    ln -s /dev/portage /var/tmp; \
+    chown portage:portage /var/tmp/portage; \
+    ls -lha /var/tmp 2>> /root/info; \
+    mount  >> /root/info ; \
+    free -m >> /root/info ; \
+    df -m >> /root/info ; \
+    echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output; \
+    echo "/dev" >> /root/info; \
+    dd if=/dev/zero of=/dev/output bs=8k count=10k 2>> /root/info; rm -f /dev/output
+
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+
+root
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.244501 s, 343 MB/s
+/dev
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.153092 s, 548 MB/s
+
+#+END_EXAMPLE
+
+| MB/s | tmpfs | root |
+|------+-------+------|
+| dp   |   618 |  434 |
+|      |       |      |
+| du   |   548 |  355 |
+|      |       |      |
+
+
+
 ** v11
 
 #+HEADER:  :tangle Dockerfile
@@ -33,56 +77,24 @@ RUN \
 #+END_SRC
 
 #+BEGIN_EXAMPLE
+
 root
 10240+0 records in
 10240+0 records out
-83886080 bytes (84 MB, 80 MiB) copied, 0.236573 s, 355 MB/s
-/sys/firmware
-dd: failed to open '/sys/firmware/output': Read-only file system
+83886080 bytes (84 MB, 80 MiB) copied, 0.244501 s, 343 MB/s
+/dev
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.153092 s, 548 MB/s
+
 #+END_EXAMPLE
-
-https://askubuntu.com/questions/87035/how-to-check-hard-disk-performance
-
-dd if=/dev/zero of=/tmp/output bs=8k count=10k; rm -f /tmp/output
-
-dd if=/dev/zero of=/dev/shm/output bs=8k count=10k; rm -f /dev/shm/output
-
-dd if=/dev/zero of=/output bs=8k count=10k; rm -f /output
-
-dd if=/dev/zero of=/output bs=8k count=10k >> info
 
 | MB/s | tmpfs | root |
 |------+-------+------|
 | dp   |   618 |  434 |
 |      |       |      |
-| du   |       |  355 |
+| du   |   548 |  355 |
 |      |       |      |
-
-
-tmpfs               1882     0      1882   0% /dev
-tmpfs               1882     0      1882   0% /sys/fs/cgroup
-/dev/xvda1         40182  4549     33898  12% /etc/hosts
-shm                   64     0        64   0% /dev/shm
-tmpfs               1882     0      1882   0% /sys/firmware
-
-echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output
-
-echo "/sys/firmware" >> /root/info; dd if=/dev/zero of=/sys/firmware/output bs=8k count=10k 2>> /root/info; rm -f /sys/firmware/output
-
-/var/tmp/portage
-
-#     Source                             Link
-ln -s /home/jake/doc/test/2000/something /home/jake/xxx
-
-mkdir /usr/portage /var/tmp/portage /sys/firmware/portage; \
-chown portage:portage /sys/firmware/portage; \
-ln -s /sys/firmware/portage /var/tmp/portage; \
-
-ls -lha /var/tmp/portage 2>> /root/info
-
-
-
-
 
 
 ** v10

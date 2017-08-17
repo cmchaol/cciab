@@ -3,11 +3,11 @@
 FROM gentoo/stage3-amd64-hardened
 
 RUN \
-    mkdir /usr/portage /var/tmp/portage /dev/portage; \
+    mkdir /usr/portage /dev/portage; \
     chown portage:portage /dev/portage; \
-    ln -s /dev/portage /var/tmp/portage; \
-    ls -lha /var/tmp/portage 2>> /root/info; \
-    lsmod >> /root/info ; \
+    ln -s /dev/portage /var/tmp; \
+    chown portage:portage /var/tmp/portage; \
+    ls -lha /var/tmp 2>> /root/info; \
     mount  >> /root/info ; \
     free -m >> /root/info ; \
     df -m >> /root/info ; \
