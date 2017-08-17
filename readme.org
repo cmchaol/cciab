@@ -8,6 +8,66 @@
 |                                           |
 | C-u C-c C-v t                             |
 
+** v13
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+# FROM busybox
+FROM gentoo/stage3-amd64-hardened
+
+RUN \
+    mkdir /usr/portage /dev/portage; \
+    chown portage:portage /dev/portage; \
+    ls -lha /dev/portage >> /root/info; \
+    ln -s /dev/portage /var/tmp; \
+    chown portage:portage /var/tmp/portage; \
+    ls -lha /var/tmp >> /root/info; \
+    mount  >> /root/info ; \
+    free -m >> /root/info ; \
+    df -m >> /root/info ; \
+    echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output; \
+    echo "/dev" >> /root/info; \
+    dd if=/dev/zero of=/dev/output bs=8k count=10k 2>> /root/info; rm -f /dev/output
+
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+
+[2017-08-17 Thu 18:16]
+
+root
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.304374 s, 276 MB/s
+/dev
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.129834 s, 646 MB/s
+
+
+root
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.244501 s, 343 MB/s
+/dev
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.153092 s, 548 MB/s
+
+#+END_EXAMPLE
+
+| MB/s | tmpfs | root |
+|------+-------+------|
+| dpl  |   618 |  434 |
+|      |       |      |
+| doc  |   548 |  355 |
+|      |   646 |  276 |
+|      |       |      |
+
+
+
+
+
 
 ** v12
 
@@ -33,50 +93,17 @@ RUN \
 
 #+BEGIN_EXAMPLE
 
+[2017-08-17 Thu 18:16]
+
 root
 10240+0 records in
 10240+0 records out
-83886080 bytes (84 MB, 80 MiB) copied, 0.244501 s, 343 MB/s
+83886080 bytes (84 MB, 80 MiB) copied, 0.304374 s, 276 MB/s
 /dev
 10240+0 records in
 10240+0 records out
-83886080 bytes (84 MB, 80 MiB) copied, 0.153092 s, 548 MB/s
+83886080 bytes (84 MB, 80 MiB) copied, 0.129834 s, 646 MB/s
 
-#+END_EXAMPLE
-
-| MB/s | tmpfs | root |
-|------+-------+------|
-| dp   |   618 |  434 |
-|      |       |      |
-| du   |   548 |  355 |
-|      |       |      |
-
-
-
-** v11
-
-#+HEADER:  :tangle Dockerfile
-#+BEGIN_SRC sh
-# FROM busybox
-FROM gentoo/stage3-amd64-hardened
-
-RUN \
-    mkdir /usr/portage /var/tmp/portage /dev/portage; \
-    chown portage:portage /dev/portage; \
-    ln -s /dev/portage /var/tmp/portage; \
-    ls -lha /var/tmp/portage 2>> /root/info; \
-    lsmod >> /root/info ; \
-    mount  >> /root/info ; \
-    free -m >> /root/info ; \
-    df -m >> /root/info ; \
-    echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output; \
-    echo "/dev" >> /root/info; \
-    dd if=/dev/zero of=/dev/output bs=8k count=10k 2>> /root/info; rm -f /dev/output
-
-
-#+END_SRC
-
-#+BEGIN_EXAMPLE
 
 root
 10240+0 records in
@@ -91,10 +118,14 @@ root
 
 | MB/s | tmpfs | root |
 |------+-------+------|
-| dp   |   618 |  434 |
+| dpl  |   618 |  434 |
 |      |       |      |
-| du   |   548 |  355 |
+| doc  |   548 |  355 |
+|      |   646 |  276 |
 |      |       |      |
+
+
+
 
 
 ** v10

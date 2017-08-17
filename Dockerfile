@@ -5,9 +5,10 @@ FROM gentoo/stage3-amd64-hardened
 RUN \
     mkdir /usr/portage /dev/portage; \
     chown portage:portage /dev/portage; \
+    ls -lha /dev/portage >> /root/info; \
     ln -s /dev/portage /var/tmp; \
     chown portage:portage /var/tmp/portage; \
-    ls -lha /var/tmp 2>> /root/info; \
+    ls -lha /var/tmp >> /root/info; \
     mount  >> /root/info ; \
     free -m >> /root/info ; \
     df -m >> /root/info ; \
