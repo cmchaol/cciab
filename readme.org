@@ -34,6 +34,8 @@ RUN \
 
 #+BEGIN_EXAMPLE
 
+Permission denied: 'stat('/var/tmp/portage')'
+
 #+END_EXAMPLE
 
 | MB/s | tmpfs | root |
