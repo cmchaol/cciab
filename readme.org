@@ -8,6 +8,53 @@
 |                                           |
 | C-u C-c C-v t                             |
 
+** v17
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+# FROM busybox
+FROM gentoo/stage3-amd64-hardened
+
+RUN \
+    mkdir /usr/portage /dev/tmp; \
+    chown portage:portage /dev/tmp; \
+    ls -lha /dev/tmp >> /root/info; \
+    echo PORTAGE_TMPDIR=\"/dev/tmp\" >> /etc/portage/make.conf; \
+    free -m >> /root/info ; \
+    echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output; \
+    echo "/dev" >> /root/info; \
+    dd if=/dev/zero of=/dev/output bs=8k count=10k 2>> /root/info; rm -f /dev/output; \
+    emerge-webrsync; \
+    emerge net-misc/proxychains; \
+    df -m >> /root/info 
+
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+
+Permission denied: 'stat('/var/tmp/portage')'
+
+#+END_EXAMPLE
+
+| MB/s | tmpfs | root |
+|------+-------+------|
+| dpl  |   618 |  434 |
+|      |       |      |
+| doc  |   548 |  355 |
+|      |   646 |  276 |
+|      |   559 |  321 |
+|      |   550 |  403 |
+|      |  1100 |  733 |
+
+
+
+cat /etc/portage/make.conf
+
+echo "root" >> /root/info
+
+echo PORTAGE_TMPDIR=\"/dev/tmp\" >> /etc/portage/make.conf
+
+
 ** v16
 
 #+HEADER:  :tangle Dockerfile
