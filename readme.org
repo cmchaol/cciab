@@ -32,7 +32,31 @@ RUN \
 
 #+BEGIN_EXAMPLE
 
-Permission denied: 'stat('/var/tmp/portage')'
+total 0
+drwxr-xr-x 2 portage portage  40 Aug 18 08:25 .
+drwxr-xr-x 6 root    root    360 Aug 18 08:25 ..
+
+              total        used        free      shared  buff/cache   available
+Mem:           3762         204        1553           5        2004        3360
+Swap:             0           0           0
+
+root
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.121794 s, 689 MB/s
+
+/dev
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.0755275 s, 1.1 GB/s
+
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay            40182  5788     32659  16% /
+tmpfs               1882     0      1882   0% /dev
+tmpfs               1882     0      1882   0% /sys/fs/cgroup
+/dev/xvda1         40182  5788     32659  16% /etc/hosts
+shm                   64     0        64   0% /dev/shm
+tmpfs               1882     0      1882   0% /sys/firmware
 
 #+END_EXAMPLE
 
@@ -45,6 +69,8 @@ Permission denied: 'stat('/var/tmp/portage')'
 |      |   559 |  321 |
 |      |   550 |  403 |
 |      |  1100 |  733 |
+|      |  1100 |  689 |
+|      |       |      |
 
 
 
