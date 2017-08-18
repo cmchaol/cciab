@@ -8,6 +8,74 @@
 |                                           |
 | C-u C-c C-v t                             |
 
+** v15
+
+#+HEADER:  :tangle Dockerfile
+#+BEGIN_SRC sh
+# FROM busybox
+FROM gentoo/stage3-amd64-hardened
+
+RUN \
+    mkdir /usr/portage /dev/portage; \
+    chown portage:portage /dev/portage; \
+    ls -lha /dev/portage >> /root/info; \
+    ln -s /dev/portage /var/tmp; \
+    chown portage:portage -h /var/tmp/portage; \
+    ls -lha /var/tmp >> /root/info; \
+    mount  >> /root/info ; \
+    lsblk  >> /root/info ; \
+    free -m >> /root/info ; \
+    dd if=/dev/zero of=/root/swapfile1 bs=1024 count=524288; \
+    chown root:root /root/swapfile1; \
+    chmod 0600 /root/swapfile1; \
+    mkswap /root/swapfile1; \
+    swapon /root/swapfile1; \
+    free -m >> /root/info ; \
+    df -m >> /root/info ; \
+    echo "root" >> /root/info; dd if=/dev/zero of=/output bs=8k count=10k 2>> /root/info; rm -f /output; \
+    echo "/dev" >> /root/info; \
+    dd if=/dev/zero of=/dev/output bs=8k count=10k 2>> /root/info; rm -f /dev/output; rm -f /root/swapfile1
+
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+
+
+#+END_EXAMPLE
+
+| MB/s | tmpfs | root |
+|------+-------+------|
+| dpl  |   618 |  434 |
+|      |       |      |
+| doc  |   548 |  355 |
+|      |   646 |  276 |
+|      |   559 |  321 |
+|      |   550 |  403 |
+|      |       |      |
+
+
+https://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/
+
+
+# dd if=/dev/zero of=/swapfile1 bs=1024 count=524288
+
+dd if=/dev/zero of=/root/swapfile1 bs=1024 count=524288
+
+# chown root:root /swapfile1
+# chmod 0600 /swapfile1
+
+chown root:root /root/swapfile1
+chmod 0600 /root/swapfile1
+
+# mkswap /swapfile1
+
+mkswap /root/swapfile1
+
+# swapon /swapfile1
+
+swapon /swapfile1
+
+
 ** v14
 
 #+HEADER:  :tangle Dockerfile
@@ -38,6 +106,64 @@ RUN \
 #+END_SRC
 
 #+BEGIN_EXAMPLE
+total 0
+drwxr-xr-x 2 portage portage  40 Aug 18 01:33 .
+drwxr-xr-x 6 root    root    360 Aug 18 01:33 ..
+total 8.0K
+drwxrwxrwt 1 root root 4.0K Aug 18 01:33 .
+drwxr-xr-x 1 root root 4.0K Aug 10 21:06 ..
+-rw-r--r-- 1 root root    0 Aug 10 21:06 .keep
+lrwxrwxrwx 1 root root   12 Aug 18 01:33 portage -> /dev/portage
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/docker/overlay2/l/7OCBV4VOVPGREVNWOEFHJPTQ4N:/var/lib/docker/overlay2/l/KF7CFTJ57O5BG267FBV3PWE5RQ,upperdir=/var/lib/docker/overlay2/586e0773c39bc9f17de774cb3a47e0d98a73f42ff283c3f9f87a28a3692b0dd8/diff,workdir=/var/lib/docker/overlay2/586e0773c39bc9f17de774cb3a47e0d98a73f42ff283c3f9f87a28a3692b0dd8/work)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,mode=755)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,relatime,mode=755)
+cgroup on /sys/fs/cgroup/systemd type cgroup (ro,nosuid,nodev,noexec,relatime,xattr,release_agent=/lib/systemd/systemd-cgroups-agent,name=systemd)
+cgroup on /sys/fs/cgroup/blkio type cgroup (ro,nosuid,nodev,noexec,relatime,blkio)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (ro,nosuid,nodev,noexec,relatime,cpuset)
+cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (ro,nosuid,nodev,noexec,relatime,net_cls,net_prio)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (ro,nosuid,nodev,noexec,relati
+cgroup on /sys/fs/cgroup/freezer type cgroup (ro,nosuid,nodev,noexec,relatime,f
+cgroup on /sys/fs/cgroup/devices type cgroup (ro,nosuid,nodev,noexec,relatime,d
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (ro,nosuid,nodev,noexec,relatime,h
+cgroup on /sys/fs/cgroup/pids type cgroup (ro,nosuid,nodev,noexec,relatime,pids
+cgroup on /sys/fs/cgroup/perf_event type cgroup (ro,nosuid,nodev,noexec,relatim
+cgroup on /sys/fs/cgroup/memory type cgroup (ro,nosuid,nodev,noexec,relatime,me
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+/dev/xvda1 on /etc/resolv.conf type ext4 (rw,relatime,discard,data=ordered)
+/dev/xvda1 on /etc/hostname type ext4 (rw,relatime,discard,data=ordered)
+/dev/xvda1 on /etc/hosts type ext4 (rw,relatime,discard,data=ordered)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k)
+proc on /proc/bus type proc (ro,nosuid,nodev,noexec,relatime)
+proc on /proc/fs type proc (ro,nosuid,nodev,noexec,relatime)
+proc on /proc/irq type proc (ro,nosuid,nodev,noexec,relatime)
+proc on /proc/sys type proc (ro,nosuid,nodev,noexec,relatime)
+proc on /proc/sysrq-trigger type proc (ro,nosuid,nodev,noexec,relatime)
+tmpfs on /proc/kcore type tmpfs (rw,nosuid,mode=755)
+tmpfs on /proc/timer_list type tmpfs (rw,nosuid,mode=755)
+tmpfs on /proc/timer_stats type tmpfs (rw,nosuid,mode=755)
+tmpfs on /proc/sched_debug type tmpfs (rw,nosuid,mode=755)
+tmpfs on /sys/firmware type tmpfs (ro,relatime)
+              total        used        free      shared  buff/cache   available
+Mem:           3762         184        2147           5        1430        3379
+Swap:             0           0           0
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay            40182  4438     34009  12% /
+tmpfs               1882     0      1882   0% /dev
+tmpfs               1882     0      1882   0% /sys/fs/cgroup
+/dev/xvda1         40182  4438     34009  12% /etc/hosts
+shm                   64     0        64   0% /dev/shm
+tmpfs               1882     0      1882   0% /sys/firmware
+root
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.208406 s, 403 MB/s
+/dev
+10240+0 records in
+10240+0 records out
+83886080 bytes (84 MB, 80 MiB) copied, 0.152652 s, 550 MB/s
 
 
 #+END_EXAMPLE
@@ -72,6 +198,7 @@ mkswap /root/swapfile1
 # swapon /swapfile1
 
 swapon /swapfile1
+
 
 ** v13
 
